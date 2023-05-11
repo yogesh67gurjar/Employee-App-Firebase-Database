@@ -33,7 +33,6 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
     public EmployeeAdapter(List<Employee> employeeList, Context context) {
         this.employeeList = employeeList;
         this.context = context;
-
     }
 
     @NonNull
@@ -65,6 +64,8 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
             public void onClick(View v) {
                 // for update
                 Bundle bundle = new Bundle();
+                bundle.putString("EmployeeId", singleUnit.getEmployeeId());
+
                 bundle.putString("Name", singleUnit.getName());
                 bundle.putString("FatherName", singleUnit.getFatherName());
                 bundle.putString("Dob", singleUnit.getDob());
@@ -72,14 +73,14 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
                 bundle.putString("Phone", singleUnit.getPhone());
                 bundle.putString("Email", singleUnit.getEmail());
                 bundle.putString("Address", singleUnit.getAddress());
-                bundle.putString("EmployeeId", singleUnit.getEmployeeId());
                 bundle.putString("Designation", singleUnit.getDesignation());
                 bundle.putString("Experience", singleUnit.getExperience());
                 bundle.putBoolean("MaritalStatus", singleUnit.isMaritalStatus());
                 bundle.putFloat("Salary", singleUnit.getSalary());
                 bundle.putString("imagePath", singleUnit.getImagePath());
+                bundle.putBoolean("update", true);
 
-                AddEmployee addEmp = new AddEmployee( context);
+                AddEmployee addEmp = new AddEmployee(context);
                 FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
                 addEmp.setArguments(bundle);
                 addEmp.show(fm, addEmp.getTag());

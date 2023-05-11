@@ -1,7 +1,7 @@
 package com.androiddeveloperyogesh.employee_app_firebase_database.Models;
 
 public class Employee {
-    private String uId;
+    private String employeeId;
     private String name;
     private String fatherName;
     private String dob;
@@ -9,14 +9,14 @@ public class Employee {
     private String phone;
     private String email;
     private String address;
-    private String employeeId;
     private String designation;
     private String experience;
     private boolean maritalStatus;
     private float salary;
     private String imagePath;
 
-    public Employee(String name, String fatherName, String dob, String gender, String phone, String email, String address, String employeeId, String designation, String experience, boolean maritalStatus, float salary, String imagePath) {
+    public Employee(String employeeId, String name, String fatherName, String dob, String gender, String phone, String email, String address, String designation, String experience, boolean maritalStatus, float salary, String imagePath) {
+        this.employeeId = employeeId;
         this.name = name;
         this.fatherName = fatherName;
         this.dob = dob;
@@ -24,24 +24,6 @@ public class Employee {
         this.phone = phone;
         this.email = email;
         this.address = address;
-        this.employeeId = employeeId;
-        this.designation = designation;
-        this.experience = experience;
-        this.maritalStatus = maritalStatus;
-        this.salary = salary;
-        this.imagePath = imagePath;
-    }
-
-    public Employee(String uId, String name, String fatherName, String dob, String gender, String phone, String email, String address, String employeeId, String designation, String experience, boolean maritalStatus, float salary, String imagePath) {
-        this.uId = uId;
-        this.name = name;
-        this.fatherName = fatherName;
-        this.dob = dob;
-        this.gender = gender;
-        this.phone = phone;
-        this.email = email;
-        this.address = address;
-        this.employeeId = employeeId;
         this.designation = designation;
         this.experience = experience;
         this.maritalStatus = maritalStatus;
@@ -52,13 +34,12 @@ public class Employee {
     public Employee() {
     }
 
-
-    public String getuId() {
-        return uId;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setuId(String uId) {
-        this.uId = uId;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public String getName() {
@@ -115,14 +96,6 @@ public class Employee {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getEmployeeId() {
-        return employeeId;
-    }
-
-    public void setEmployeeId(String employeeId) {
-        this.employeeId = employeeId;
     }
 
     public String getDesignation() {
