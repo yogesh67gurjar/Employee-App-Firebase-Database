@@ -22,10 +22,7 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.androiddeveloperyogesh.employee_app_firebase_database.Adapters.EmployeeAdapter;
-import com.androiddeveloperyogesh.employee_app_firebase_database.BottomSheetDialogFragment.AddEmployee;
-import com.androiddeveloperyogesh.employee_app_firebase_database.MainActivity;
 import com.androiddeveloperyogesh.employee_app_firebase_database.Models.Employee;
-import com.androiddeveloperyogesh.employee_app_firebase_database.R;
 import com.androiddeveloperyogesh.employee_app_firebase_database.databinding.ActivityAllEmployeesBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,7 +30,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,7 +65,7 @@ public class AllEmployees extends AppCompatActivity {
         binding.addFirstEmployee.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddEmployee addEmp = new AddEmployee(AllEmployees.this);
+                AddEmployeeBottomSheet addEmp = new AddEmployeeBottomSheet(AllEmployees.this);
                 addEmp.show(getSupportFragmentManager(), addEmp.getTag());
             }
         });

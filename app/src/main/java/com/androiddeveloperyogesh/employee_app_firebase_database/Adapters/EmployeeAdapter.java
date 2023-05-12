@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,9 +16,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.androiddeveloperyogesh.employee_app_firebase_database.BottomSheetDialogFragment.AddEmployee;
+import com.androiddeveloperyogesh.employee_app_firebase_database.EmployeeRelated.AddEmployeeBottomSheet;
 import com.androiddeveloperyogesh.employee_app_firebase_database.EmployeeRelated.AllEmployees;
-import com.androiddeveloperyogesh.employee_app_firebase_database.MainActivity;
 import com.androiddeveloperyogesh.employee_app_firebase_database.Models.Employee;
 import com.androiddeveloperyogesh.employee_app_firebase_database.R;
 import com.google.firebase.database.DatabaseReference;
@@ -74,7 +72,7 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
 
                 bundle.putString("EmployeeId", singleUnit.getEmployeeId());
 
-                AddEmployee addEmp = new AddEmployee(context);
+                AddEmployeeBottomSheet addEmp = new AddEmployeeBottomSheet(context);
                 FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
                 addEmp.setArguments(bundle);
                 addEmp.show(fm, addEmp.getTag());

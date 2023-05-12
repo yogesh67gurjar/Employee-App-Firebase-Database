@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/round_corner_top_lavender"
     android:orientation="vertical"
-    tools:context=".BottomSheetDialogFragment.AddEmployee">
+    tools:context=".EmployeeRelated.AddEmployeeBottomSheet">
 
     <LinearLayout
         android:layout_width="match_parent"
