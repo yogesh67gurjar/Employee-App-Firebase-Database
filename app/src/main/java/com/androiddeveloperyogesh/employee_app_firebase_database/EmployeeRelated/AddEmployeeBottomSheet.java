@@ -232,6 +232,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
     private void getBitmapFromImagePath(String imagePath) {
         File imageFile = new File(imagePath);
         if (imageFile.exists()) {
+
             try {
                 InputStream inputStream = new FileInputStream(imageFile);
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
