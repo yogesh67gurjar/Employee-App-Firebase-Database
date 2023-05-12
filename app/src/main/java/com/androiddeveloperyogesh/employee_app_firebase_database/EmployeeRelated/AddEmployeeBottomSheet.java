@@ -51,7 +51,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
     DatabaseReference databaseReference;
 
     // shuru me jb apn employee ko add krenge tb employeeId rhengi apne paas phir jb update krenge to constantEmployeeId use krenge qki apn ko purani employeeId ko change nhi krna he to apne paas jo database se employeeId aaegi usi ko reuse krenge apn
-    String constantEmployeeId, employeeId;
+    String employeeId;
     String imagePath;
     boolean imageBoolean = false;
 
@@ -77,10 +77,10 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
             binding.employeeId.setEnabled(false);
 
             // bundle se id le li
-            constantEmployeeId = getArguments().getString("EmployeeId");
+            employeeId = getArguments().getString("EmployeeId");
 
-            //  database me apn ne ye set kr diya k hum is child k liye kaam krenge jo ki apna constant employeeId he
-            databaseReference = firebaseDatabase.getReference("Employees").child(constantEmployeeId);
+            //  database me apn ne ye set kr diya k hum is child k liye kaam krenge jo is employeeId se jaana jaata he
+            databaseReference = firebaseDatabase.getReference("Employees").child(employeeId);
 
             databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -90,6 +90,9 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                     // database se data le liya apn ne us employee ka jiski employeeId thi apne paas
                     // ye isliye liya qki apn ko edittext me bydefault dikhaane hi he na he sb cheeze change krne k liye
                     Employee singleEmployee = dataSnapshot.getValue(Employee.class);
+
+                    employeeId = singleEmployee.getEmployeeId();
+
                     binding.nameEt.setText(singleEmployee.getName());
                     binding.fatherNameEt.setText(singleEmployee.getFatherName());
                     binding.dobEt.setText(singleEmployee.getDob());
@@ -97,7 +100,6 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                     binding.emailEt.setText(singleEmployee.getEmail());
                     binding.addressEt.setText(singleEmployee.getAddress());
                     binding.employeeId.setText(singleEmployee.getEmployeeId());
-                    constantEmployeeId = singleEmployee.getEmployeeId();
                     binding.designitionEt.setText(singleEmployee.getDesignation());
                     binding.experienceEt.setText(singleEmployee.getExperience());
                     binding.salaryEt.setText(String.valueOf(singleEmployee.getSalary()));
@@ -106,12 +108,10 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                     //  imagepath jo mil rha he usse imageView me bitmap set kr denge
                     getBitmapFromImagePath(imagePath);
 
-                    if (singleEmployee.getGender() != null) {
-                        if (singleEmployee.getGender().equalsIgnoreCase("male")) {
-                            binding.rbMale.setChecked(true);
-                        } else {
-                            binding.rbFemale.setChecked(true);
-                        }
+                    if (singleEmployee.getGender().equalsIgnoreCase("male")) {
+                        binding.rbMale.setChecked(true);
+                    } else {
+                        binding.rbFemale.setChecked(true);
                     }
 
                     if (singleEmployee.isMaritalStatus()) {
@@ -149,9 +149,45 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                 boolean marriage = false;
 
                 String name, fatherName, dob, phone, email, address, designation, experience, salary, gender;
-                if (getArguments() != null) {
-                    // update hoga
-//                    employeeId = binding.employeeId.getText().toString();
+
+                if (binding.employeeId.getText().toString().trim().isEmpty()) {
+                    binding.employeeId.setError("enter employee Id");
+                    binding.employeeId.requestFocus();
+                } else if (binding.nameEt.getText().toString().trim().isEmpty()) {
+                    binding.nameEt.setError("enter name");
+                    binding.nameEt.requestFocus();
+                } else if (binding.fatherNameEt.getText().toString().trim().isEmpty()) {
+                    binding.fatherNameEt.setError("enter father name");
+                    binding.fatherNameEt.requestFocus();
+                } else if (binding.dobEt.getText().toString().trim().isEmpty()) {
+                    binding.dobEt.setError("enter Dob");
+                    binding.dobEt.requestFocus();
+                } else if (binding.phoneEt.getText().toString().trim().isEmpty()) {
+                    binding.phoneEt.setError("enter phone no.");
+                    binding.phoneEt.requestFocus();
+                } else if (binding.emailEt.getText().toString().trim().isEmpty()) {
+                    binding.emailEt.setError("enter email");
+                    binding.emailEt.requestFocus();
+                } else if (binding.addressEt.getText().toString().trim().isEmpty()) {
+                    binding.addressEt.setError("enter address");
+                    binding.addressEt.requestFocus();
+                } else if (binding.designitionEt.getText().toString().trim().isEmpty()) {
+                    binding.designitionEt.setError("enter designation");
+                    binding.designitionEt.requestFocus();
+                } else if (binding.experienceEt.getText().toString().trim().isEmpty()) {
+                    binding.experienceEt.setError("enter experience");
+                    binding.experienceEt.requestFocus();
+                } else if (binding.salaryEt.getText().toString().trim().isEmpty()) {
+                    binding.salaryEt.setError("enter salary");
+                    binding.salaryEt.requestFocus();
+                } else if (selectedIdGender == -1) {
+                    Toast.makeText(context, "please select gender", Toast.LENGTH_SHORT).show();
+                } else if (selectedIdMaritalStatus == -1) {
+                    Toast.makeText(context, "please select marital status", Toast.LENGTH_SHORT).show();
+                } else if (!imageBoolean) {
+                    Toast.makeText(context, "please upload image", Toast.LENGTH_SHORT).show();
+                } else {
+
                     name = binding.nameEt.getText().toString();
                     fatherName = binding.fatherNameEt.getText().toString();
                     dob = binding.dobEt.getText().toString();
@@ -162,89 +198,23 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                     experience = binding.experienceEt.getText().toString();
                     salary = binding.salaryEt.getText().toString();
                     gender = genderRb.getText().toString();
-                    if (maritalStatus.getText().toString().equals("married")) {
-                        marriage = true;
-                    }
-                    addNewEmployeeFunc(constantEmployeeId, name, fatherName, dob, gender, phone, email, address, designation, experience, marriage, Float.parseFloat(salary), imagePath);
+                    marriage = maritalStatus.getText().toString().equals("married");
 
-                } else {
-                    if (binding.employeeId.getText().toString().trim().isEmpty()) {
-                        binding.employeeId.setError("enter employee Id");
-                        binding.employeeId.requestFocus();
-                    } else if (binding.nameEt.getText().toString().trim().isEmpty()) {
-                        binding.nameEt.setError("enter name");
-                        binding.nameEt.requestFocus();
-                    } else if (binding.fatherNameEt.getText().toString().trim().isEmpty()) {
-                        binding.fatherNameEt.setError("enter father name");
-                        binding.fatherNameEt.requestFocus();
-                    } else if (binding.dobEt.getText().toString().trim().isEmpty()) {
-                        binding.dobEt.setError("enter Dob");
-                        binding.dobEt.requestFocus();
-                    } else if (binding.phoneEt.getText().toString().trim().isEmpty()) {
-                        binding.phoneEt.setError("enter phone no.");
-                        binding.phoneEt.requestFocus();
-                    } else if (binding.emailEt.getText().toString().trim().isEmpty()) {
-                        binding.emailEt.setError("enter email");
-                        binding.emailEt.requestFocus();
-                    } else if (binding.addressEt.getText().toString().trim().isEmpty()) {
-                        binding.addressEt.setError("enter address");
-                        binding.addressEt.requestFocus();
-                    } else if (binding.designitionEt.getText().toString().trim().isEmpty()) {
-                        binding.designitionEt.setError("enter designation");
-                        binding.designitionEt.requestFocus();
-                    } else if (binding.experienceEt.getText().toString().trim().isEmpty()) {
-                        binding.experienceEt.setError("enter experience");
-                        binding.experienceEt.requestFocus();
-                    } else if (binding.salaryEt.getText().toString().trim().isEmpty()) {
-                        binding.salaryEt.setError("enter salary");
-                        binding.salaryEt.requestFocus();
-                    } else if (selectedIdGender == -1) {
-                        Toast.makeText(context, "please select gender", Toast.LENGTH_SHORT).show();
-                    } else if (selectedIdMaritalStatus == -1) {
-                        Toast.makeText(context, "please select marital status", Toast.LENGTH_SHORT).show();
-                    } else {
+                    if (getArguments() == null) {
                         employeeId = binding.employeeId.getText().toString();
-                        name = binding.nameEt.getText().toString();
-                        fatherName = binding.fatherNameEt.getText().toString();
-                        dob = binding.dobEt.getText().toString();
-                        phone = binding.phoneEt.getText().toString();
-                        email = binding.emailEt.getText().toString();
-                        address = binding.addressEt.getText().toString();
-                        designation = binding.designitionEt.getText().toString();
-                        experience = binding.experienceEt.getText().toString();
-                        salary = binding.salaryEt.getText().toString();
-                        gender = genderRb.getText().toString();
-                        if (maritalStatus.getText().toString().equals("married")) {
-                            marriage = true;
-                        }
-                        addNewEmployeeFunc(employeeId, name, fatherName, dob, gender, phone, email, address, designation, experience, marriage, Float.parseFloat(salary), imagePath);
                     }
-
-
+                    addNewEmployeeFunc(employeeId, name, fatherName, dob, gender, phone, email, address, designation, experience, marriage, Float.parseFloat(salary), imagePath);
                 }
 
+
             }
+
+
         });
 
         return binding.getRoot();
     }
 
-    private void getBitmapFromImagePath(String imagePath) {
-        File imageFile = new File(imagePath);
-        if (imageFile.exists()) {
-
-            try {
-                InputStream inputStream = new FileInputStream(imageFile);
-                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                binding.imageView.setImageBitmap(bitmap);
-
-
-                inputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
 //    private void getUriFromImagePath(String imageP) {
 //        File imageFile = new File(imageP);
@@ -306,11 +276,29 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
         return result;
     }
 
-    public void addNewEmployeeFunc(String employeeId, String name, String fatherName, String dob, String gender, String phone, String email, String address, String designation, String experience, boolean maritalStatus, float salary, String image) {
+    private void getBitmapFromImagePath(String imagePath) {
+        File imageFile = new File(imagePath);
+        if (imageFile.exists()) {
 
+            try {
+                InputStream inputStream = new FileInputStream(imageFile);
+                Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                binding.imageView.setImageBitmap(bitmap);
+
+
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void addNewEmployeeFunc(String employeeId, String name, String fatherName, String dob, String gender, String phone, String email, String address, String designation, String experience, boolean maritalStatus, float salary, String image) {
         if (getArguments() == null) {
             // adding
             databaseReference = firebaseDatabase.getReference("Employees");
+
+            // add krna he to hashmap ki help se add krenge
             databaseReference.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -340,6 +328,8 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
 
         } else {
             databaseReference = firebaseDatabase.getReference("Employees");
+
+            //  update krna he to bhi hashmap ki help se krenge
             firebaseDatabase.getReference("Employees").child(employeeId).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -368,7 +358,6 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
             });
         }
         this.dismiss();
-
         ((AllEmployees) context).showEmployees();
     }
 }
