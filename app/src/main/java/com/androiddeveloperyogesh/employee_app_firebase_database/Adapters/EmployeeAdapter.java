@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,8 @@ import com.androiddeveloperyogesh.employee_app_firebase_database.EmployeeRelated
 import com.androiddeveloperyogesh.employee_app_firebase_database.MainActivity;
 import com.androiddeveloperyogesh.employee_app_firebase_database.Models.Employee;
 import com.androiddeveloperyogesh.employee_app_firebase_database.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 
 import java.util.List;
@@ -28,11 +31,13 @@ import java.util.List;
 public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.EmployeeViewHolder> {
     private List<Employee> employeeList;
     Context context;
-
+    FirebaseDatabase firebaseDatabase;
+    DatabaseReference databaseReference;
 
     public EmployeeAdapter(List<Employee> employeeList, Context context) {
         this.employeeList = employeeList;
         this.context = context;
+        firebaseDatabase = FirebaseDatabase.getInstance();
     }
 
     @NonNull
@@ -57,50 +62,37 @@ public class EmployeeAdapter extends RecyclerView.Adapter<EmployeeAdapter.Employ
 
         holder.phone.setText("phone- " + singleUnit.getPhone());
 
-        holder.eId.setText("employee Id- " + String.valueOf(singleUnit.getEmployeeId()));
+        holder.eId.setText("employee Id- " + singleUnit.getEmployeeId());
 
+
+        // for UPDATE
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // for update
-                Bundle bundle = new Bundle();
-                bundle.putString("EmployeeId", singleUnit.getEmployeeId());
 
-                bundle.putString("Name", singleUnit.getName());
-                bundle.putString("FatherName", singleUnit.getFatherName());
-                bundle.putString("Dob", singleUnit.getDob());
-                bundle.putString("Gender", singleUnit.getGender());
-                bundle.putString("Phone", singleUnit.getPhone());
-                bundle.putString("Email", singleUnit.getEmail());
-                bundle.putString("Address", singleUnit.getAddress());
-                bundle.putString("Designation", singleUnit.getDesignation());
-                bundle.putString("Experience", singleUnit.getExperience());
-                bundle.putBoolean("MaritalStatus", singleUnit.isMaritalStatus());
-                bundle.putFloat("Salary", singleUnit.getSalary());
-                bundle.putString("imagePath", singleUnit.getImagePath());
-                bundle.putBoolean("update", true);
+                Bundle bundle = new Bundle();
+
+                bundle.putString("EmployeeId", singleUnit.getEmployeeId());
 
                 AddEmployee addEmp = new AddEmployee(context);
                 FragmentManager fm = ((AppCompatActivity) context).getSupportFragmentManager();
                 addEmp.setArguments(bundle);
                 addEmp.show(fm, addEmp.getTag());
-
             }
         });
 
         holder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-
+                databaseReference = firebaseDatabase.getReference("Employees");
 
                 AlertDialog.Builder b = new AlertDialog.Builder(context)
                         .setTitle("Do u really want to remove this employee ???")
                         .setPositiveButton("yes proceed",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int whichButton) {
-//                                        Employee e = databaseHelper.employeeDao().getEmployeeById(singleUnit.getId());
-//                                        databaseHelper.employeeDao().deleteEmployee(new Employee(singleUnit.getId(), singleUnit.getName(), singleUnit.getFatherName(), singleUnit.getDob(), singleUnit.getGender(), singleUnit.getPhone(), singleUnit.getEmail(), singleUnit.getAddress(), singleUnit.getEmployeeId(), singleUnit.getDesignation(), singleUnit.getExperience(), singleUnit.isMaritalStatus(), singleUnit.getSalary(), singleUnit.getImagePath()));
-//                                        Toast.makeText(context, e.getName() + " removed successfully", Toast.LENGTH_SHORT).show();
+                                        databaseReference.child(singleUnit.getEmployeeId()).removeValue();
+                                        Toast.makeText(context, " removed successfully", Toast.LENGTH_SHORT).show();
                                         ((AllEmployees) context).showEmployees();
                                     }
                                 }
