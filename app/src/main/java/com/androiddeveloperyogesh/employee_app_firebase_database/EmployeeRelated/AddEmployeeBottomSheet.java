@@ -13,13 +13,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import com.androiddeveloperyogesh.employee_app_firebase_database.EmployeeRelated.AllEmployees;
 import com.androiddeveloperyogesh.employee_app_firebase_database.Models.Employee;
 import com.androiddeveloperyogesh.employee_app_firebase_database.R;
 import com.androiddeveloperyogesh.employee_app_firebase_database.databinding.FragmentAddEmployeeBinding;
@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Objects;
 
 
 public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
@@ -51,7 +52,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
     DatabaseReference databaseReference;
 
     // shuru me jb apn employee ko add krenge tb employeeId rhengi apne paas phir jb update krenge to constantEmployeeId use krenge qki apn ko purani employeeId ko change nhi krna he to apne paas jo database se employeeId aaegi usi ko reuse krenge apn
-    String employeeId;
+    String employeeId = null;
     String imagePath;
     boolean imageBoolean = false;
 
@@ -60,7 +61,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentAddEmployeeBinding.inflate(inflater, container, false);
         View view = inflater.inflate(R.layout.fragment_add_employee, container, false);
 
@@ -68,10 +69,6 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
 
         if (getArguments() != null) {
             // is case me update hoga
-
-
-            // image definitely aarhi hogi isiliye isko true hi rkh do shuru me hi
-            imageBoolean = true;
 
             // employeeId edittext k text me ab koi bhi modification nhi kr skta he user
             binding.employeeId.setEnabled(false);
@@ -256,6 +253,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                 Uri selectedImageUri = data.getData();
                 if (null != selectedImageUri) {
                     binding.imageView.setImageURI(selectedImageUri);
+                    imageBoolean = true;
                     imagePath = getRealPathFromURI(data.getData());
                 }
             }
@@ -284,6 +282,8 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                 InputStream inputStream = new FileInputStream(imageFile);
                 Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                 binding.imageView.setImageBitmap(bitmap);
+// image definitely aarhi hogi isiliye isko true hi rkh do shuru me hi
+                imageBoolean = true;
 
 
                 inputStream.close();
@@ -294,6 +294,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
     }
 
     public void addNewEmployeeFunc(String employeeId, String name, String fatherName, String dob, String gender, String phone, String email, String address, String designation, String experience, boolean maritalStatus, float salary, String image) {
+       Log.d("addNewEmpFuncCallHua","kiti baar");
         if (getArguments() == null) {
             // adding
             databaseReference = firebaseDatabase.getReference("Employees");
@@ -317,6 +318,7 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                     map.put("salary", salary);
                     map.put("imagePath", image);
                     databaseReference.child(employeeId).setValue(map);
+                    Log.d("ginti","one 2 add");
                     Toast.makeText(context, "employee added successfully", Toast.LENGTH_SHORT).show();
                 }
 
@@ -347,13 +349,14 @@ public class AddEmployeeBottomSheet extends BottomSheetDialogFragment {
                     map.put("maritalStatus", maritalStatus);
                     map.put("salary", salary);
                     map.put("imagePath", image);
-
+                    Log.d("ginti","one 1 update");
                     databaseReference.child(employeeId).updateChildren(map);
                     Toast.makeText(context, "employee updated successfully", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
+
                 }
             });
         }
