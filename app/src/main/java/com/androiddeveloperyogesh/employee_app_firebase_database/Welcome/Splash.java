@@ -31,7 +31,7 @@ public class Splash extends AppCompatActivity {
             }
 
             public void onFinish() {
-                intent = new Intent(Splash.this, AllEmployees.class);
+                intent = new Intent(Splash.this, MainActivity.class);
                 startActivity(intent);
                 finish();
             }
